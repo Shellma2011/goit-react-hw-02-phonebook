@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 import shortid from 'shortid';
+import Section from './components/Section';
 import ContactForm from './components/ContactForm';
 import ContactList from './components/ContactList';
 import Filter from './components/Filter';
+import Container from './components/Container';
 
 class App extends Component {
   state = {
@@ -13,24 +16,23 @@ class App extends Component {
       { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
     ],
     filter: '',
-    // contacts: [],
-    // name: '',
-    // number: '',
   };
 
-  // formSubmitHandler = data => console.log(data);
-  // handleNumberChange = e => {
-  //   this.setState({ number: e.target.value });
-  // };
-
   addContact = ({ name, number }) => {
-    const contact = {
+    const newContact = {
       id: shortid.generate(),
       name,
       number,
     };
+    if (
+      this.state.contacts.find(
+        contact => contact.name === newContact.name || contact.number === newContact.number,
+      )
+    ) {
+      return toast.success(`${newContact.name} is already in contacts!`);
+    }
     this.setState(({ contacts }) => ({
-      contacts: [contact, ...contacts],
+      contacts: [newContact, ...contacts],
     }));
   };
 
@@ -54,31 +56,18 @@ class App extends Component {
 
   render() {
     const { filter } = this.state;
-    // const newContacts = this.addContact();
-
     const visibleContacts = this.getVisibleContacts();
 
     return (
       <div>
-        {/* <h1>Phonebook</h1> */}
-        <ContactForm onSubmit={this.addContact} />
-        {/* <h2>Contacts</h2> */}
-        <Filter value={filter} onChange={this.changeFilter} />
-        {/* <label>
-          Фильтр по имени
-          <input type="text" value={filter} onChange={this.changeFilter} />
-        </label> */}
-
-        {/* <ContactList items={contacts} /> */}
-        <ContactList items={visibleContacts} onDeleteContact={this.deleteContact} />
-        {/* <ul>
-          {this.state.contacts.map(({ id, name, number }) => (
-            <li key={id}>
-              <p>{name}</p>
-              <p>{number}</p>
-            </li>
-          ))}
-        </ul> */}
+        <Section title="Phonebook">
+          <Toaster />
+          <ContactForm onSubmit={this.addContact} />
+          <Container title="Contacts">
+            <Filter value={filter} onChange={this.changeFilter} />
+            <ContactList items={visibleContacts} onDeleteContact={this.deleteContact} />
+          </Container>
+        </Section>
       </div>
     );
   }
