@@ -24,9 +24,12 @@ class App extends Component {
       name,
       number,
     };
+
     if (
       this.state.contacts.find(
-        contact => contact.name === newContact.name || contact.number === newContact.number,
+        contact =>
+          contact.name.toLowerCase() === newContact.name.toLowerCase() ||
+          contact.number === newContact.number,
       )
     ) {
       return toast.success(`${newContact.name} is already in contacts!`);
